@@ -1,0 +1,27 @@
+{
+  "name": "zahlenspiel",
+  "version": "1.0.0",
+  "description": "Zahlenspiel",
+  "main": "index.js",
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean -y && npm run clean:artifacts",
+    "clean:artifacts": "lerna exec -- rm -rf dist/ tsconfig.tsbuildinfo",
+    "rebuild": "npm run clean && npm i && npm run bootstrap && npm run build",
+    "build": "lerna run build",
+    "prebundle": "rm -rf bundle && mkdir bundle && npm run rebuild",
+    "bundle-frontend": "cp -rf packages/zahlenspiel-ui/build bundle/public",
+    "bundle-backend": "cp -rf packages/zahlenspiel-backend/node_modules bundle && mv packages/zahlenspiel-backend/app bundle",
+    "bundle": "npm run bundle-backend && npm run bundle-frontend"
+  },
+  "keywords": [
+    "zahlenspiel",
+    "card",
+    "game"
+  ],
+  "author": "Simon Hofmann <kontakt@s1h.org>",
+  "license": "ISC",
+  "devDependencies": {
+    "lerna": "^3.20.2"
+  }
+}

@@ -1,0 +1,1 @@
+export const MAX_RECONNECTION_TIME_IN_SECONDS = 900;

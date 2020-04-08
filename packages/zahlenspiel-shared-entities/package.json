@@ -1,0 +1,14 @@
+{
+  "name": "zahlenspiel-shared-entities",
+  "version": "1.0.0",
+  "description": "Zahlenspiel Shared Entities",
+  "main": "dist/index",
+  "types": "dist/index",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "Simon Hofmann <kontakt@s1h.org>",
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}
