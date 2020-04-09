@@ -8,7 +8,14 @@ interface GameErrorBoundaryState {
     error?: Error;
 }
 
-export const ErrorImage = styled.img`
+const ErrorContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-even;
+    flex-direction: column;
+`;
+
+const ErrorImage = styled.img`
     width: 100vw;
     max-height: 50vh;
     position: relative;
@@ -44,8 +51,10 @@ export class GameErrorBoundary extends Component<any, GameErrorBoundaryState> {
                         <HeaderText>An error occured ...</HeaderText>
                     </Top>
                     <Center>
-                        <h3>{this.state.error?.message}</h3>
-                        <ErrorImage src={errorImage}/>
+                        <ErrorContainer>
+                            <h3>{this.state.error?.message}</h3>
+                            <ErrorImage src={errorImage}/>
+                        </ErrorContainer>
                     </Center>
                     <Bottom>
                         <h4>You can try and refresh the page</h4>
