@@ -6,6 +6,7 @@ import './index.css';
 import Game from './Game';
 import * as serviceWorker from './serviceWorker';
 import {MAX_RECONNECTION_TIME_IN_SECONDS} from "zahlenspiel-shared-entities";
+import {GameErrorBoundary} from "./GameErrorBoundary";
 
 const Storage = {
     sessionId: "zahlenspiel_sessionId",
@@ -95,7 +96,9 @@ if (!isStateOutdated()) {
 
 ReactDOM.render(
     <React.StrictMode>
-        <Game room={room}/>
+        <GameErrorBoundary>
+            <Game room={room}/>
+        </GameErrorBoundary>
     </React.StrictMode>,
     document.getElementById('root')
 );

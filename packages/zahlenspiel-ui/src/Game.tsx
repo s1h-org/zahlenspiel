@@ -53,7 +53,6 @@ const Game = (props: GameProps) => {
     const [cardDeck, setCardDeck] = useState<Card[]>();
     const [totalRemainingCards, setTotalRemainingCards] = useState<number>();
     const [remainingCardsInDeck, setRemainingCardsInDeck] = useState<number>();
-    const [currentError, setCurrentError] = useState<number>();
 
     useEffect(() => {
         room.current.then(r => {
@@ -90,10 +89,7 @@ const Game = (props: GameProps) => {
                     setCurrentState(GameStates.LOST);
                 }
             })
-        }).catch((reason => {
-            setCurrentError(reason);
-            setCurrentState(GameStates.ERROR);
-        }));
+        });
     }, []);
 
     const startGame = () => {
@@ -154,19 +150,6 @@ const Game = (props: GameProps) => {
 
     const gameComponent = () => {
         switch (currentState) {
-            case GameStates.ERROR:
-                return (<>
-                        <Top>
-                            <HeaderText>An error occured ...</HeaderText>
-                        </Top>
-                        <Center>
-                            <h3>{currentError}</h3>
-                        </Center>
-                        <Bottom>
-                            <h4>You can try and refresh the page</h4>
-                        </Bottom>
-                    </>
-                );
             case GameStates.WAITING:
                 return (<>
                         <Top>
