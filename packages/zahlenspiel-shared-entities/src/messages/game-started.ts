@@ -1,5 +1,4 @@
-import {BaseMessage, MessageType} from "./base-message";
-import {createTypeGuard} from "./create-typeguard";
+import {BaseMessage, createTypeGuard, MessageType} from "./base-message";
 
 export const isGameStartedMessage = createTypeGuard("game-started");
 

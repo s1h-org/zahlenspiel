@@ -1,6 +1,5 @@
-import {BaseMessage, MessageType} from "./base-message";
+import {BaseMessage, createTypeGuard, MessageType} from "./base-message";
 import {Player} from "../entities";
-import {createTypeGuard} from "./create-typeguard";
 
 export const isPlayerSwitchMessage = createTypeGuard("player-switch");
 

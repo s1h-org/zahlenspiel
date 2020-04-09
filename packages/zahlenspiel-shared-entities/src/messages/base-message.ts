@@ -42,3 +42,7 @@ export type MessageType = NewCard |
 export abstract class BaseMessage {
     abstract type: MessageType;
 }
+
+export const createTypeGuard = <T>(identifier: MessageType) => {
+    return (possibleTarget: any) => ("type" in possibleTarget && (possibleTarget as BaseMessage).type === identifier);
+};
