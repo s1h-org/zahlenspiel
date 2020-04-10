@@ -12,7 +12,7 @@ import {
 import {CardComponent} from "./components/Card";
 import {CardStackComponent} from "./components/CardStack";
 import {HighlightedPlayerView, PlayerView} from "./components/PlayerView";
-import {LobbyView} from "./components/LobbyView";
+import {PlayerListView} from "./components/PlayerListView";
 import {ActionButton, NextButton} from "./components/Buttons";
 
 import ufo from "./ufo.svg";
@@ -25,40 +25,39 @@ import {FinishTurnAction} from "./actions/finish-turn";
 import {SelectCardStackAction} from "./actions/select-cardstack";
 
 export interface GameProps {
-    room: Promise<Room>;
+    room: Room;
 }
 
 const Game = (props: GameProps) => {
 
-    const room = useRef<Promise<Room>>(props.room);
+    const room = useRef<Room>(props.room);
 
     const [gameState, dispatch] = useReducer(zahlenspielReducer, initialState);
 
     useEffect(() => {
-        room.current.then(r => {
-            r.onMessage((message: any) => {
+            window.location.hash = room.current.id;
+            room.current.onMessage((message: any) => {
                 dispatch(message);
             });
-        });
     }, []);
 
     const startGame = () => {
-        room.current.then(r => r.send(new StartGameMessage()));
+        room.current.send(new StartGameMessage());
     };
 
     const requestFirstTurn = () => {
         if (gameState.self) {
-            room.current.then(r => r.send(new VoteFirstTurnMessage(gameState.self?.order!)));
+            room.current.send(new VoteFirstTurnMessage(gameState.self?.order!));
         }
     };
 
     const finishTurn = () => {
-        room.current.then(r => r.send(new FinishTurnMessage(gameState.self?.order!)));
+        room.current.send(new FinishTurnMessage(gameState.self?.order!));
         dispatch(new FinishTurnAction())
     };
 
     const dropCard = (card: Card, stackId: string) => {
-        room.current.then(r => r.send(new DropCardMessage(card, stackId)));
+        room.current.send(new DropCardMessage(card, stackId));
     };
 
     const renderCardStacks = () => {
@@ -105,9 +104,9 @@ const Game = (props: GameProps) => {
                             <HeaderText>Waiting for players ...</HeaderText>
                         </Top>
                         <Center>
-                            <LobbyView>
+                            <PlayerListView>
                                 {renderPlayers()}
-                            </LobbyView>
+                            </PlayerListView>
                         </Center>
                         <Bottom>
                             <ActionButton onClick={startGame}>{"Start game!"}</ActionButton>
@@ -140,9 +139,9 @@ const Game = (props: GameProps) => {
                         </CardStacks>
                     </Top>
                     <Center>
-                        <LobbyView>
+                        <PlayerListView>
                             {renderPlayers()}
-                        </LobbyView>
+                        </PlayerListView>
                         <CardDeckComponent numberOfCards={3}>{gameState.remainingCardsInDeck}</CardDeckComponent>
                     </Center>
                     <Bottom>
