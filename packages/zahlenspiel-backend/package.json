@@ -1,6 +1,6 @@
 {
   "name": "zahlenspiel-backend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Zahlenspiel Backend",
   "main": "dist/index",
   "types": "dist/index",
@@ -36,6 +36,6 @@
     "express-jwt": "^5.3.1",
     "uuid": "^7.0.2",
     "winston": "^3.2.1",
-    "zahlenspiel-shared-entities": "1.0.0"
+    "zahlenspiel-shared-entities": "1.1.0"
   }
 }
