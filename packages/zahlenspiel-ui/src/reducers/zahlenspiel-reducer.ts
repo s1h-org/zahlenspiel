@@ -59,9 +59,25 @@ export const zahlenspielReducer = (state: UIState, action: any): UIState => {
             couldFinish: true
         }
     } else if (isUpdateCardStacksMessage(action)) {
+        let updatedStackId;
+        const currentCardStacks = state.cardStacks ?? [];
+        for (let idx = 0; idx < currentCardStacks.length; ++idx) {
+            for (let odx = 0; odx < action.cardStacks.length; ++odx) {
+                const current = currentCardStacks[idx];
+                const updated = action.cardStacks[odx];
+                if (updated.id === current.id && updated.values.length > current.values.length) {
+                    updatedStackId = updated.id;
+                    break;
+                }
+            }
+            if (updatedStackId) {
+                break;
+            }
+        }
         return {
             ...state,
             cardStacks: action.cardStacks,
+            updatedCardStackId: updatedStackId,
             remainingCardsInDeck: action.remainingCardsInDeck
         }
     } else if (isSetupFinishedMessage(action)) {

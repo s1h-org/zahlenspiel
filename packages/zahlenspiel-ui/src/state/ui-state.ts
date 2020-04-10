@@ -7,6 +7,7 @@ export interface UIState {
     players: Player[];
     currentPlayer?: Player;
     cardStacks?: CardStack[];
+    updatedCardStackId?: string;
     selectedCardStack?: CardStack;
     cardDeck: Card[];
     totalRemainingCards?: number;
