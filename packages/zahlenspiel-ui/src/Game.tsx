@@ -2,6 +2,7 @@ import {Room} from "colyseus.js";
 import React, {useEffect, useReducer, useRef} from 'react';
 import {
     Card,
+    CardStack,
     DropCardMessage,
     FinishTurnMessage,
     GameStates,
@@ -73,14 +74,15 @@ const Game = (props: GameProps) => {
     }
 
     const renderCardStacks = () => {
-        return gameState.cardStacks?.map(cardStack => {
+        return gameState.cardStacks?.map((cardStack: CardStack) => {
                 return (<>
                     <CardStackComponent key={`${cardStack.direction}_${cardStack.id}`}
                                         src={(cardStack.direction === "ascending") ? ufo : comet}/>
                     <CardComponent key={cardStack.id}
                                    card={new Card(cardStack.values[cardStack.values.length - 1])}
                                    onClick={() => dispatch(new SelectCardStackAction(cardStack))}
-                                   active={cardStack.id === gameState.selectedCardStack?.id}/>
+                                   active={cardStack.id === gameState.selectedCardStack?.id}
+                                   falling={cardStack.id === gameState.updatedCardStackId}/>
                 </>)
             }
         );
@@ -88,8 +90,8 @@ const Game = (props: GameProps) => {
 
     const renderCards = () => {
         return gameState.cardDeck?.sort((first: Card, second: Card) => first.value - second.value)
-            .filter(card => card.value)
-            .map(card => {
+            .filter((card: Card) => card.value)
+            .map((card: Card) => {
                 return (<CardComponent key={card.value}
                                        card={card}
                                        onClick={() => dropCard(card, gameState.selectedCardStack?.id!)}/>)
