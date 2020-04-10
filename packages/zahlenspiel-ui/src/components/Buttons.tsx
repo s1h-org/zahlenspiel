@@ -11,13 +11,7 @@ export const ActionButton = styled.div`
     border: white 2px solid;
     padding: 0.5rem;
 `;
-export const NextButtonContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    cursor: default;
-    background: #282c34;
-    border: white 2px solid;
-    padding: 0.5rem;
+export const NextButtonContainer = styled(ActionButton)`
     margin: 1rem;
 `;
 export interface NextButtonProps {

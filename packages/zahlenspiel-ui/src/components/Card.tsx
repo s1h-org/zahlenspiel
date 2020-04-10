@@ -33,19 +33,7 @@ const CardContainer = styled.div`
     }
   }
 `;
-export const StackCard = styled(CardContainer)`
-    display: flex;
-    align-items: center;
-    font-family: Josefin Sans, serif;
-    font-size: 1.5rem;
-    font-weight: bold;
-    letter-spacing: -1px;
-    box-sizing: border-box;
-    padding: 5px;
-    &:hover {
-        border: none;
-    }
-`;
+
 const CenterText = styled.div`
     font-size: 1.5rem;
     font-weight: bold;
@@ -59,12 +47,7 @@ const Mark = styled.div`
     left: 5%;
 `;
 
-const FlippedMark = styled.div`
-    position: absolute;
-    font-size: 1.5rem;
-    font-weight: bold;
-    top: 5%;
-    left: 5%;
+const FlippedMark = styled(Mark)`
     transform: rotate(180deg);
     top: auto;
     left: auto;
