@@ -28,10 +28,16 @@ const Zahlenspiel = (props: ZahlenspielProps) => {
         setError(error);
     }
 
+    const leaveGame = (roomId: string) => {
+        client.current.leave(roomId);
+        window.location.hash = "";
+        setCurrentGame(undefined);
+    }
+
     if (error) {
         return <ErrorView><h3>{error.message}</h3></ErrorView>;
     } else if (currentGame) {
-        return <Game room={currentGame}/>;
+        return <Game room={currentGame} onQuit={leaveGame}/>;
     } else {
         return <Lobby connectionHandler={client.current}/>;
     }

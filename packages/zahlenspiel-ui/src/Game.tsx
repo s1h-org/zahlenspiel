@@ -17,7 +17,7 @@ import {ActionButton, NextButton} from "./components/Buttons";
 
 import ufo from "./ufo.svg";
 import comet from "./comet.svg";
-import {AppContainer, Bottom, CardDeck, CardStacks, Center, HeaderText, Top} from "./components/Layout";
+import {AppContainer, Bottom, CardDeck, CardStacks, Center, Column, HeaderText, Top} from "./components/Layout";
 import {CardDeckComponent} from "./components/CardDeck";
 import {initialState} from "./state/ui-state";
 import {zahlenspielReducer} from "./reducers/zahlenspiel-reducer";
@@ -26,6 +26,7 @@ import {SelectCardStackAction} from "./actions/select-cardstack";
 
 export interface GameProps {
     room: Room;
+    onQuit: (roomId: string) => void;
 }
 
 const Game = (props: GameProps) => {
@@ -35,10 +36,10 @@ const Game = (props: GameProps) => {
     const [gameState, dispatch] = useReducer(zahlenspielReducer, initialState);
 
     useEffect(() => {
-            window.location.hash = room.current.id;
-            room.current.onMessage((message: any) => {
-                dispatch(message);
-            });
+        window.location.hash = room.current.id;
+        room.current.onMessage((message: any) => {
+            dispatch(message);
+        });
     }, []);
 
     const startGame = () => {
@@ -59,6 +60,17 @@ const Game = (props: GameProps) => {
     const dropCard = (card: Card, stackId: string) => {
         room.current.send(new DropCardMessage(card, stackId));
     };
+
+    const leaveGame = (done: boolean) => {
+        let isSure = true;
+        if (!done) {
+            isSure = window.confirm("You really want to leave and let the game win?");
+        }
+        if (isSure) {
+            room.current.leave(true);
+            props.onQuit(room.current.id);
+        }
+    }
 
     const renderCardStacks = () => {
         return gameState.cardStacks?.map(cardStack => {
@@ -87,8 +99,12 @@ const Game = (props: GameProps) => {
     const renderPlayers = () => {
         return gameState.players.map((player: Player) => {
             return (gameState.currentPlayer?.order === player.order) ?
-                <HighlightedPlayerView key={player.order} name={player.name} imageSize={64}/> :
-                <PlayerView key={player.order} name={player.name} imageSize={64}/>
+                <HighlightedPlayerView key={player.order} name={player.name} imageSize={64}
+                                       isOwnPlayer={gameState.self?.order === player.order}
+                                       onClick={() => leaveGame(false)}/> :
+                <PlayerView key={player.order} name={player.name} imageSize={64}
+                            isOwnPlayer={gameState.self?.order === player.order}
+                            onClick={() => leaveGame(false)}/>
         });
     };
 
@@ -158,7 +174,10 @@ const Game = (props: GameProps) => {
                             {renderCardStacks()}
                         </CardStacks>
                     </Top>
-                    <Center>Great job, you beat the game!</Center>;
+                    <Center>
+                        {"Great job, you beat the game!"}
+                        <ActionButton onClick={() => leaveGame(true)}>{"New game!"}</ActionButton>
+                    </Center>;
                     <Bottom>
                         <CardDeck>
                             {renderCards()}
@@ -172,8 +191,13 @@ const Game = (props: GameProps) => {
                             {renderCardStacks()}
                         </CardStacks>
                     </Top>
-                    <Center>Oh no, you got beaten by the game! There were {gameState.totalRemainingCards} cards
-                        left!</Center>
+                    <Center>
+                        <Column>
+                            {gameState.causeOfLoss ? gameState.causeOfLoss : "Oh no, you got beaten by the game!"} There
+                            were {gameState.totalRemainingCards} cards left in total!
+                            <ActionButton onClick={() => leaveGame(true)}>{"New game!"}</ActionButton>
+                        </Column>
+                    </Center>
                     <Bottom>
                         <CardDeck>
                             {renderCards()}
