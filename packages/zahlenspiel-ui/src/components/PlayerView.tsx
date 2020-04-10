@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import {Avatar} from "./Avatar";
-import React from "react";
+import React, {HTMLProps} from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 
 interface PlayerContainerProps {
     borderColor: string;
@@ -21,14 +23,22 @@ const PlayerName = styled.h4`
     letter-spacing: -1px;
 `;
 
-export interface PlayerProps {
+const QuitGameButton = styled.span`
+    position: relative;
+    float: right;
+    margin-left: 0.75rem;
+`;
+
+export interface PlayerProps extends HTMLProps<HTMLDivElement> {
     name: string;
     imageSize?: number;
+    isOwnPlayer: boolean;
 }
 
 export const PlayerView = (props: PlayerProps) => {
     return (
         <PlayerContainer borderColor={"white"} borderSize={"1px"}>
+            {props.isOwnPlayer && <QuitGameButton onClick={props.onClick}><FontAwesomeIcon icon={faTimesCircle}/></QuitGameButton>}
             <Avatar identifier={props.name} size={props.imageSize}/>
             <PlayerName>{props.name}</PlayerName>
         </PlayerContainer>
@@ -38,6 +48,7 @@ export const PlayerView = (props: PlayerProps) => {
 export const HighlightedPlayerView = (props: PlayerProps) => {
     return (
         <PlayerContainer borderColor={"green"} borderSize={"2px"}>
+            {props.isOwnPlayer && <QuitGameButton onClick={props.onClick}><FontAwesomeIcon icon={faTimesCircle}/></QuitGameButton>}
             <Avatar identifier={props.name} size={props.imageSize}/>
             <PlayerName>{props.name}</PlayerName>
         </PlayerContainer>
