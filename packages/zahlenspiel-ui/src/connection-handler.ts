@@ -1,5 +1,6 @@
 import {Client, Room} from "colyseus.js";
 import {getPlayerName, getRoompassword, setRoompassword} from "./game-data-handler";
+import {get, set, Store} from "idb-keyval";
 
 export class ConnectionHandler {
     public onJoin?: (room: Room) => void;
@@ -7,7 +8,7 @@ export class ConnectionHandler {
     public onReconnect?: (room: Room) => void;
     public onError?: (error: any) => void;
 
-    constructor(private readonly client: Client) {
+    constructor(private readonly client: Client, private readonly store: Store) {
     }
 
     getAvailableRooms = () => {
@@ -29,20 +30,28 @@ export class ConnectionHandler {
         });
     };
     join = (roomId: string) => {
-        const playerName = getPlayerName();
-        const password = getRoompassword();
-        const room = this.client.joinById(roomId, {playerName, password});
-        room.then(r => {
-            if (this.onJoin) {
-                this.onJoin(r);
+        get<string>(roomId, this.store).then(sessionId => {
+            if (sessionId) {
+                this.reconnect(roomId, sessionId);
+            } else {
+                const playerName = getPlayerName();
+                const password = getRoompassword();
+                const room = this.client.joinById(roomId, {playerName, password});
+                room.then(r => {
+                    set(roomId, r.sessionId, this.store).then(() => {
+                        if (this.onJoin) {
+                            this.onJoin(r);
+                        }
+                    });
+                }).catch(error => {
+                    if (this.onError) {
+                        this.onError(error);
+                    }
+                });
             }
-        }).catch(error => {
-            if (this.onError) {
-                this.onError(error);
-            }
-        });
+        })
     };
-    reconnect = (roomId: string, sessionId: string) => {
+    private reconnect = (roomId: string, sessionId: string) => {
         const room = this.client.reconnect(roomId, sessionId);
         room.then(r => {
             if (this.onReconnect) {

@@ -7,6 +7,7 @@ import {GameErrorBoundary} from "./GameErrorBoundary";
 import {ConnectionHandler} from "./connection-handler";
 import Zahlenspiel from "./Zahlenspiel";
 import {getRoomId} from "./game-data-handler";
+import {Store} from "idb-keyval";
 
 let endpoint = `${window.document.location.protocol.replace("http", "ws")}//${window.document.location.hostname}`;
 if (window.document.location.port && window.document.location.port !== "80") {
@@ -15,13 +16,14 @@ if (window.document.location.port && window.document.location.port !== "80") {
     endpoint = `${endpoint}:2567`;
 }
 
+const zahlenspielStore = new Store('zahlenspiel-db', 'session-store');
 const connectionHandler = new ConnectionHandler(
-    new Colyseus.Client(endpoint)
+    new Colyseus.Client(endpoint),
+    zahlenspielStore
 );
 
 const directJoinRoomId = getRoomId();
 if (directJoinRoomId) {
-    console.log("direct join room:", directJoinRoomId);
     connectionHandler.join(directJoinRoomId);
 }
 
