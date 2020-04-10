@@ -26,7 +26,7 @@ export const zahlenspielReducer = (state: UIState, action: any): UIState => {
             self: action.self
         }
     } else if (isJoinErrorMessage(action)) {
-        throw new Error('Failed to join game.');
+        throw new Error(action.reason);
     } else if (isPlayerJoinMessage(action)) {
         return {
             ...state,
