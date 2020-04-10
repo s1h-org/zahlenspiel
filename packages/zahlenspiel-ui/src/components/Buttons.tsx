@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React from "react";
+import React, {HTMLProps} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFastForward} from "@fortawesome/free-solid-svg-icons";
 
@@ -14,8 +14,7 @@ export const ActionButton = styled.div`
 export const NextButtonContainer = styled(ActionButton)`
     margin: 1rem;
 `;
-export interface NextButtonProps {
-    onClick: (...args: any) => any;
+export interface NextButtonProps extends HTMLProps<HTMLDivElement> {
 }
 export const NextButton = (props: NextButtonProps) => {
     return (
