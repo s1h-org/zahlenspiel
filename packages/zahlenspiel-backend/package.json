@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "build:dev": "tsc",
-    "build": "webpack"
+    "build": "npm run build:dev && webpack"
   },
   "author": "Simon Hofmann <kontakt@s1h.org>",
   "devDependencies": {
