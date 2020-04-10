@@ -83,6 +83,7 @@ export const zahlenspielReducer = (state: UIState, action: any): UIState => {
         return {
             ...state,
             totalRemainingCards: action.remainingCards,
+            causeOfLoss: action.reason,
             currentState: GameStates.LOST
         }
     } else if (isFinishTurnAction(action)) {

@@ -10,6 +10,7 @@ export interface UIState {
     selectedCardStack?: CardStack;
     cardDeck: Card[];
     totalRemainingCards?: number;
+    causeOfLoss?: string;
     remainingCardsInDeck?: number;
 }
 export const initialState: UIState = {
