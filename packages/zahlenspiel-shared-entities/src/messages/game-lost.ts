@@ -5,7 +5,7 @@ export const isGameLostMessage = createTypeGuard("game-lost");
 export class GameLostMessage extends BaseMessage {
     type: MessageType = "game-lost";
 
-    constructor(public remainingCards: number) {
+    constructor(public remainingCards: number, public reason?: string) {
         super();
     }
 }
