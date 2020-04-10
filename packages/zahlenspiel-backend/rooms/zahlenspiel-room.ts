@@ -30,7 +30,15 @@ export class ZahlenspielRoom extends Room<GameState> {
     maxClients = 5;
 
     onCreate(options: any) {
-        this.setState(new GameState())
+        this.setState(new GameState(options.password))
+    }
+
+    onAuth(client: Client, options: any): boolean {
+        if (this.state.password?.length) {
+            return (this.state.password === options.password)
+        } else {
+            return true;
+        }
     }
 
     onJoin(client: Client, options: any) {
@@ -39,7 +47,9 @@ export class ZahlenspielRoom extends Room<GameState> {
         const newPlayer = this.state.getPlayer(client.id);
         if (newPlayer) {
             this.send(client, new JoinSuccessMessage(toPlayerDTO(newPlayer)));
-            this.broadcast(new PlayerJoinMessage(marshallPlayers(this.state.players)));
+            setTimeout(() => {
+                this.broadcast(new PlayerJoinMessage(marshallPlayers(this.state.players)));
+            }, 300);
         } else {
             this.send(client, new JoinErrorMessage("Failed to add player."));
         }

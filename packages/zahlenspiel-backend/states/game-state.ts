@@ -14,12 +14,14 @@ export class GameState extends Schema {
     @type("number")
     currentGameState: GameStates;
 
+    password?: string;
+
     currentPlayer: Player;
 
     validDroppedCards: number = 0;
     currentDeck: number[];
 
-    constructor() {
+    constructor(password: string) {
         super();
         this.addAscendingCardStack();
         this.addAscendingCardStack();
@@ -27,6 +29,7 @@ export class GameState extends Schema {
         this.addDescendingCardStack();
         this.currentDeck = newDeck(2, 99);
         this.currentGameState = GameStates.WAITING;
+        this.password = password;
     }
 
     private addAscendingCardStack() {
