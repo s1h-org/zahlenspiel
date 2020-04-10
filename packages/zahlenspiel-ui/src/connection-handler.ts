@@ -20,9 +20,11 @@ export class ConnectionHandler {
         const password = setRoompassword();
         const room = this.client.create('zahlenspiel', {playerName, password});
         room.then(r => {
-            if (this.onCreate) {
-                this.onCreate(r);
-            }
+            set(r.id, r.sessionId, this.store).then(() => {
+                if (this.onCreate) {
+                    this.onCreate(r);
+                }
+            });
         }).catch(error => {
             if (this.onError) {
                 this.onError(error);
