@@ -91,7 +91,7 @@ export class ZahlenspielRoom extends Room<GameState> {
                         this.broadcast(new GameWonMessage());
                         return;
                     } else if (this.state.isGameLost()) {
-                        this.broadcast(new GameLostMessage(this.state.totalRemainingCards()));
+                        this.broadcast(new GameLostMessage(this.state.totalRemainingCards(), "You can't drop anymore cards!"));
                     } else if (turnFinishable(this.state.validDroppedCards, this.state.currentDeck.length)) {
                         this.send(player.client, new TurnFinishableMessage());
                     }
@@ -110,9 +110,13 @@ export class ZahlenspielRoom extends Room<GameState> {
     async onLeave(client: Client, consented: boolean) {
         if (consented) {
             console.log(`Client left: ${client.id}`);
+            const leavingPlayer = this.state.getPlayer(client.id);
             this.state.removePlayer(client.id);
             const playerList = marshallPlayers(this.state.players);
             this.broadcast(new PlayerLeaveMessage(playerList), {except: client});
+            if (this.isGamePhase()) {
+                this.broadcast(new GameLostMessage(this.state.totalRemainingCards(), `${leavingPlayer.name} couldn't handle the pressure and left!`));
+            }
         } else {
             const reconnectedClient = await this.allowReconnection(client, MAX_RECONNECTION_TIME_IN_SECONDS);
             const player = this.state.getPlayer(client.id);
@@ -126,7 +130,7 @@ export class ZahlenspielRoom extends Room<GameState> {
 
     private nextPlayer() {
         if (this.state.isGameLost()) {
-            this.broadcast(new GameLostMessage(this.state.totalRemainingCards()));
+            this.broadcast(new GameLostMessage(this.state.totalRemainingCards(), "You can't drop anymore cards!"));
         } else {
             this.state.nextPlayer();
             this.broadcast(new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
