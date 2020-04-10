@@ -1,5 +1,11 @@
 import styled from "styled-components";
 
+export const Column = styled.div`
+    display: flex;
+    align-items: space-around;
+    justify-content: center;
+    flex-direction: column;
+`;
 export const Left = styled.div`
     width: 25%;
     display: flex;
