@@ -1,6 +1,6 @@
 import {Client, Room} from "colyseus.js";
 import {getPlayerName, getRoompassword, setRoompassword} from "./game-data-handler";
-import {get, set, Store} from "idb-keyval";
+import {del, get, set, Store} from "idb-keyval";
 
 export class ConnectionHandler {
     public onJoin?: (room: Room) => void;
@@ -53,6 +53,9 @@ export class ConnectionHandler {
             }
         })
     };
+    leave = (roomId: string) => {
+        del(roomId, this.store);
+    }
     private reconnect = (roomId: string, sessionId: string) => {
         const room = this.client.reconnect(roomId, sessionId);
         room.then(r => {
