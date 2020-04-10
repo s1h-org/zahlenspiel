@@ -1,5 +1,26 @@
 import styled from "styled-components";
 
+export const Left = styled.div`
+    width: 25%;
+    display: flex;
+    flex-grow: 0.5;
+    align-items: space-around;
+    justify-content: center;
+`;
+export const Middle = styled.div`
+    width: 50%;
+    display: flex;
+    flex-grow: 2;
+    align-items: space-around;
+    justify-content: center;
+`;
+export const Right = styled.div`
+    width: 25%;
+    display: flex;
+    flex-grow: 0.5;
+    align-items: space-around;
+    justify-content: center;
+`;
 export const Top = styled.div`
     height: 25%;
     display: flex;
