@@ -1,10 +1,11 @@
-import React, {ReactNode} from "react";
+import React, {HTMLProps} from "react";
 import {Card} from "zahlenspiel-shared-entities";
 
 import styled from "styled-components";
 
 interface CardContainerProps {
     active?: boolean;
+    falling?: boolean;
 }
 
 const CardContainer = styled.div`
@@ -31,7 +32,24 @@ const CardContainer = styled.div`
     &:hover {
         border: white 2px solid;
     }
-  }
+    animation: ${(props: CardContainerProps) => props.falling ? "scale-down-center 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both" : null};
+    @-webkit-keyframes scale-down-center {
+        0% {
+            transform: scale(1.3);
+        }
+        100% {
+            transform: scale(1.0);
+        }
+    }
+    @keyframes scale-down-center {
+        0% {
+            transform: scale(1.3);
+        }
+        100% {
+            transform: scale(1.0);
+        }
+    }
+}
 `;
 
 const CenterText = styled.div`
@@ -56,17 +74,16 @@ const FlippedMark = styled(Mark)`
     color: #E1623F;
 `;
 
-interface CardProps {
+interface CardProps extends HTMLProps<HTMLDivElement> {
     card: Card;
     active?: boolean;
-    onClick?: () => void;
-    children?: ReactNode;
+    falling?: boolean;
 }
 
 export const CardComponent = (props: CardProps) => {
-    return (<CardContainer key={props.card.value} onClick={props.onClick} active={props.active}>
+    return (<CardContainer key={props.card.value} onClick={props.onClick} active={props.active} falling={props.falling}>
         <Mark>{props.card.value}</Mark>
-        <CenterText>{props.children ? props.children : null}</CenterText>
+        <CenterText>{props.children}</CenterText>
         <FlippedMark>{props.card.value}</FlippedMark>
     </CardContainer>)
 };
