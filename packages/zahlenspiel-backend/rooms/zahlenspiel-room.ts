@@ -46,7 +46,9 @@ export class ZahlenspielRoom extends Room<GameState> {
         this.state.addNewPlayer(client, options.playerName || "Guy Incognito");
         const newPlayer = this.state.getPlayer(client.id);
         if (newPlayer) {
-            this.send(client, new JoinSuccessMessage(toPlayerDTO(newPlayer)));
+            setTimeout(() => {
+                this.send(client, new JoinSuccessMessage(toPlayerDTO(newPlayer)));
+            }, 300);
             setTimeout(() => {
                 this.broadcast(new PlayerJoinMessage(marshallPlayers(this.state.players)));
             }, 300);
@@ -106,21 +108,16 @@ export class ZahlenspielRoom extends Room<GameState> {
     }
 
     async onLeave(client: Client, consented: boolean) {
-
-        try {
-            if (consented) {
-                throw new Error("Consented leave");
-            }
-
-            const reconnectedClient = await this.allowReconnection(client, MAX_RECONNECTION_TIME_IN_SECONDS);
-            const player = this.state.getPlayer(client.id);
-            player.client = reconnectedClient;
-            this.syncPlayerAfterReconnect(player);
-        } catch (e) {
+        if (consented) {
             console.log(`Client left: ${client.id}`);
             this.state.removePlayer(client.id);
             const playerList = marshallPlayers(this.state.players);
             this.broadcast(new PlayerLeaveMessage(playerList), {except: client});
+        } else {
+            const reconnectedClient = await this.allowReconnection(client, MAX_RECONNECTION_TIME_IN_SECONDS);
+            const player = this.state.getPlayer(client.id);
+            player.client = reconnectedClient;
+            this.syncPlayerAfterReconnect(player);
         }
     }
 
@@ -197,17 +194,19 @@ export class ZahlenspielRoom extends Room<GameState> {
     }
 
     private syncPlayerAfterReconnect(player: Player) {
-        this.send(player.client, new JoinSuccessMessage(toPlayerDTO(player)));
-        this.send(player.client, new PlayerJoinMessage(marshallPlayers(this.state.players)));
-        if (this.isPreGamePhase()) {
-            this.send(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
-            this.send(player.client, new NewCardMessage(player.cards));
-            this.send(player.client, new SetupFinishedMessage());
-        } else if (this.isGamePhase()) {
-            this.send(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
-            this.send(player.client, new NewCardMessage(player.cards));
-            this.send(player.client, new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
-            this.send(player.client, new GameStartedMessage());
-        }
+        setTimeout(() => {
+            this.send(player.client, new JoinSuccessMessage(toPlayerDTO(player)));
+            this.send(player.client, new PlayerJoinMessage(marshallPlayers(this.state.players)));
+            if (this.isPreGamePhase()) {
+                this.send(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
+                this.send(player.client, new NewCardMessage(player.cards));
+                this.send(player.client, new SetupFinishedMessage());
+            } else if (this.isGamePhase()) {
+                this.send(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
+                this.send(player.client, new NewCardMessage(player.cards));
+                this.send(player.client, new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
+                this.send(player.client, new GameStartedMessage());
+            }
+        }, 200);
     }
 }
