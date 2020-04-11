@@ -17,7 +17,7 @@ const CardContainer = styled.div`
     height: calc(100vh / 4);
     background: #CCC5B3;
     border-radius: 12px;
-    border: ${(props: CardContainerProps) => (props.active) ? "white 2px solid" : null};
+    border: ${(props: CardContainerProps) => (props.active) ? "white 2px solid" : "grey 1px solid"};
     margin: 5px;
     position: relative;
     overflow: hidden;
@@ -33,20 +33,15 @@ const CardContainer = styled.div`
         border: white 2px solid;
     }
     animation: ${(props: CardContainerProps) => props.falling ? "scale-down-center 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both" : null};
-    @-webkit-keyframes scale-down-center {
-        0% {
-            transform: scale(1.3);
-        }
-        100% {
-            transform: scale(1.0);
-        }
-    }
     @keyframes scale-down-center {
         0% {
-            transform: scale(1.3);
+            transform: scale(1.3) rotate(0);
+        }
+        90% {
+            transform: scale(1.0);
         }
         100% {
-            transform: scale(1.0);
+            transform: rotateZ(${Math.random() * 7}deg);
         }
     }
 }
