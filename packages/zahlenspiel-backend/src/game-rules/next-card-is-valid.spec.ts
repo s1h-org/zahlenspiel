@@ -11,7 +11,7 @@ describe('NextCardValidator', () => {
             const SUT = () => ascendingCardIsValid(current, next);
 
             // THEN
-            expect(SUT).toBeTruthy();
+            expect(SUT()).toBeTruthy();
         });
 
         it('should fail a lower card when ascending', () => {
@@ -23,7 +23,7 @@ describe('NextCardValidator', () => {
             const SUT = () => ascendingCardIsValid(current, next);
 
             // THEN
-            expect(SUT).toBeFalsy();
+            expect(SUT()).toBeFalsy();
         });
 
         it('should approve a lower card when ascending if it is exactly 10 lower than current', () => {
@@ -35,7 +35,7 @@ describe('NextCardValidator', () => {
             const SUT = () => ascendingCardIsValid(current, next);
 
             // THEN
-            expect(SUT).toBeTruthy();
+            expect(SUT()).toBeTruthy();
         })
     });
 
@@ -49,7 +49,7 @@ describe('NextCardValidator', () => {
             const SUT = () => descendingCardIsValid(current, next);
 
             // THEN
-            expect(SUT).toBeTruthy();
+            expect(SUT()).toBeTruthy();
         });
 
         it('should fail a higher card when descending', () => {
@@ -61,7 +61,7 @@ describe('NextCardValidator', () => {
             const SUT = () => descendingCardIsValid(current, next);
 
             // THEN
-            expect(SUT).toBeFalsy();
+            expect(SUT()).toBeFalsy();
         });
 
         it('should approve a higher card when descending if it is exactly 10 higher than current', () => {
@@ -73,7 +73,7 @@ describe('NextCardValidator', () => {
             const SUT = () => descendingCardIsValid(current, next);
 
             // THEN
-            expect(SUT).toBeTruthy();
+            expect(SUT()).toBeTruthy();
         })
     });
 });
