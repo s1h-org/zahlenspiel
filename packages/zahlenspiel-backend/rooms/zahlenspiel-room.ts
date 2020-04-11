@@ -210,6 +210,9 @@ export class ZahlenspielRoom extends Room<GameState> {
                 this.send(player.client, new NewCardMessage(player.cards));
                 this.send(player.client, new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
                 this.send(player.client, new GameStartedMessage());
+                if (this.state.isCurrentPlayer(player) && turnFinishable(this.state.validDroppedCards, this.state.currentDeck.length)) {
+                    this.send(player.client, new TurnFinishableMessage());
+                }
             }
         }, 200);
     }
