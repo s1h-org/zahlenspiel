@@ -27,6 +27,7 @@ jobs:
           node-version: 12.16.1
       - run: npm ci
       - run: npm run bundle
+      - run: npm --prefix=packages/zahlenspiel-backend test
       - name: ssh deploy
         uses: easingthemes/ssh-deploy@v2.0.9
         env:
