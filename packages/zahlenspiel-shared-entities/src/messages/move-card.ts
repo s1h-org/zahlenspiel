@@ -1,7 +1,7 @@
 import {BaseMessage, createTypeGuard, MessageType} from "./base-message";
 import {Card} from "../entities";
 
-export const isMoveCardMessage = createTypeGuard("move-card");
+export const isMoveCardMessage = createTypeGuard<MoveCardMessage>("move-card");
 
 export class MoveCardMessage extends BaseMessage {
     type : MessageType = "move-card";

@@ -1,14 +1,14 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Bundle & Deploy
+name: Test
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ develop ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -27,13 +27,4 @@ jobs:
           node-version: 12.16.1
       - run: npm ci
       - run: npm run bundle
-      - name: ssh deploy
-        uses: easingthemes/ssh-deploy@v2.0.9
-        env:
-          ARGS: "-rtgoDzvO --no-links"
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
-          REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
-          REMOTE_USER: ${{ secrets.DEPLOY_USER }}
-          REMOTE_PORT: ${{ secrets.DEPLOY_PORT }}
-          SOURCE: "bundle/"
-          TARGET: ${{ secrets.DEPLOY_TARGET }}
+      - run: npm --prefix=packages/zahlenspiel-backend test

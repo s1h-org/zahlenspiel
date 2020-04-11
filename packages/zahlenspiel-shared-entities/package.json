@@ -1,6 +1,6 @@
 {
   "name": "zahlenspiel-shared-entities",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Zahlenspiel Shared Entities",
   "main": "dist/index",
   "types": "dist/index",

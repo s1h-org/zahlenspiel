@@ -1,7 +1,7 @@
 import {BaseMessage, createTypeGuard, MessageType} from "./base-message";
 import {Player} from "../entities";
 
-export const isJoinSuccessMessage = createTypeGuard("join-success");
+export const isJoinSuccessMessage = createTypeGuard<JoinSuccessMessage>("join-success");
 
 export class JoinSuccessMessage extends BaseMessage {
     type: MessageType = "join-success";
