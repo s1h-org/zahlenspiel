@@ -1,7 +1,7 @@
 import {BaseMessage, createTypeGuard, MessageType} from "./base-message";
 import {Player} from "../entities";
 
-export const isPlayerSwitchMessage = createTypeGuard("player-switch");
+export const isPlayerSwitchMessage = createTypeGuard<PlayerSwitchMessage>("player-switch");
 
 export class PlayerSwitchMessage extends BaseMessage {
     type: MessageType = "player-switch";

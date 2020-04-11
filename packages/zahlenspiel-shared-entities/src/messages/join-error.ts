@@ -1,6 +1,6 @@
 import {BaseMessage, createTypeGuard, MessageType} from "./base-message";
 
-export const isJoinErrorMessage = createTypeGuard("join-error");
+export const isJoinErrorMessage = createTypeGuard<JoinErrorMessage>("join-error");
 
 export class JoinErrorMessage extends BaseMessage {
     type: MessageType = "join-error";

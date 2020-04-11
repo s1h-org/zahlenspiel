@@ -1,7 +1,7 @@
 import {BaseMessage, createTypeGuard, MessageType} from "./base-message";
 import {Player} from "../entities";
 
-export const isPlayerLeaveMessage = createTypeGuard("player-leave");
+export const isPlayerLeaveMessage = createTypeGuard<PlayerLeaveMessage>("player-leave");
 
 export class PlayerLeaveMessage extends BaseMessage {
     type: MessageType = "player-leave";

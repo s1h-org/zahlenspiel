@@ -44,5 +44,5 @@ export abstract class BaseMessage {
 }
 
 export const createTypeGuard = <T>(identifier: MessageType) => {
-    return (possibleTarget: any) => ("type" in possibleTarget && (possibleTarget as BaseMessage).type === identifier);
+    return (possibleTarget: any): possibleTarget is T => ("type" in possibleTarget && (possibleTarget as BaseMessage).type === identifier);
 };

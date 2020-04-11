@@ -1,7 +1,7 @@
 import {BaseMessage, createTypeGuard, MessageType} from "./base-message";
 import {Card} from "../entities";
 
-export const isTurnValidMessage = createTypeGuard("turn-valid");
+export const isTurnValidMessage = createTypeGuard<TurnValidMessage>("turn-valid");
 
 export class TurnValidMessage extends BaseMessage {
     type: MessageType = "turn-valid";
