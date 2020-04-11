@@ -5,7 +5,7 @@ import {Server} from "colyseus";
 import {monitor} from "@colyseus/monitor";
 // import socialRoutes from "@colyseus/social/express"
 
-import {ZahlenspielRoom} from "./rooms/zahlenspiel-room";
+import {ZahlenspielRoom} from "./src/rooms/zahlenspiel-room";
 import {join} from "path";
 
 const port = Number(process.env.PORT || 2567);
