@@ -11,7 +11,8 @@ import {
     isStartGameMessage,
     isVoteFirstTurnMessage,
     JoinErrorMessage,
-    JoinSuccessMessage, MAX_RECONNECTION_TIME_IN_SECONDS,
+    JoinSuccessMessage,
+    MAX_RECONNECTION_TIME_IN_SECONDS,
     NewCardMessage,
     PlayerJoinMessage,
     PlayerLeaveMessage,
@@ -24,6 +25,7 @@ import {
 import {turnFinishable} from "../game-rules";
 import {marshallCardStacks, marshallPlayers, toPlayerDTO} from "../entities/entity-mapping";
 import {Player} from "../entities";
+import {BroadcastOptions} from "colyseus/lib/Room";
 
 export class ZahlenspielRoom extends Room<GameState> {
 
@@ -46,12 +48,8 @@ export class ZahlenspielRoom extends Room<GameState> {
         this.state.addNewPlayer(client, options.playerName || "Guy Incognito");
         const newPlayer = this.state.getPlayer(client.id);
         if (newPlayer) {
-            setTimeout(() => {
-                this.send(client, new JoinSuccessMessage(toPlayerDTO(newPlayer)));
-            }, 300);
-            setTimeout(() => {
-                this.broadcast(new PlayerJoinMessage(marshallPlayers(this.state.players)));
-            }, 300);
+            this.sendDelayed(client, new JoinSuccessMessage(toPlayerDTO(newPlayer)));
+            this.broadcastDelayed(new PlayerJoinMessage(marshallPlayers(this.state.players)));
         } else {
             this.send(client, new JoinErrorMessage("Failed to add player."));
         }
@@ -115,7 +113,7 @@ export class ZahlenspielRoom extends Room<GameState> {
             const playerList = marshallPlayers(this.state.players);
             this.broadcast(new PlayerLeaveMessage(playerList), {except: client});
             if (this.isGamePhase()) {
-                this.broadcast(new GameLostMessage(this.state.totalRemainingCards(), `${leavingPlayer.name} couldn't handle the pressure and left!`));
+                this.broadcastDelayed(new GameLostMessage(this.state.totalRemainingCards(), `${leavingPlayer.name} couldn't handle the pressure and left!`), {except: client});
             }
         } else {
             const reconnectedClient = await this.allowReconnection(client, MAX_RECONNECTION_TIME_IN_SECONDS);
@@ -198,22 +196,32 @@ export class ZahlenspielRoom extends Room<GameState> {
     }
 
     private syncPlayerAfterReconnect(player: Player) {
-        setTimeout(() => {
-            this.send(player.client, new JoinSuccessMessage(toPlayerDTO(player)));
-            this.send(player.client, new PlayerJoinMessage(marshallPlayers(this.state.players)));
-            if (this.isPreGamePhase()) {
-                this.send(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
-                this.send(player.client, new NewCardMessage(player.cards));
-                this.send(player.client, new SetupFinishedMessage());
-            } else if (this.isGamePhase()) {
-                this.send(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
-                this.send(player.client, new NewCardMessage(player.cards));
-                this.send(player.client, new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
-                this.send(player.client, new GameStartedMessage());
-                if (this.state.isCurrentPlayer(player) && turnFinishable(this.state.validDroppedCards, this.state.currentDeck.length)) {
-                    this.send(player.client, new TurnFinishableMessage());
-                }
+        this.sendDelayed(player.client, new JoinSuccessMessage(toPlayerDTO(player)));
+        this.sendDelayed(player.client, new PlayerJoinMessage(marshallPlayers(this.state.players)));
+        if (this.isPreGamePhase()) {
+            this.sendDelayed(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
+            this.sendDelayed(player.client, new NewCardMessage(player.cards));
+            this.sendDelayed(player.client, new SetupFinishedMessage());
+        } else if (this.isGamePhase()) {
+            this.sendDelayed(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
+            this.sendDelayed(player.client, new NewCardMessage(player.cards));
+            this.sendDelayed(player.client, new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
+            this.sendDelayed(player.client, new GameStartedMessage());
+            if (this.state.isCurrentPlayer(player) && turnFinishable(this.state.validDroppedCards, this.state.currentDeck.length)) {
+                this.sendDelayed(player.client, new TurnFinishableMessage());
             }
-        }, 200);
+        }
+    }
+
+    private sendDelayed(client: Client, message: any, delay: number = 200) {
+        setTimeout(() => {
+            this.send(client, message);
+        }, delay);
+    }
+
+    private broadcastDelayed(message: any, options?: BroadcastOptions, delay: number = 200) {
+        setTimeout(() => {
+            this.broadcast(message, options);
+        }, delay);
     }
 }
