@@ -1,6 +1,6 @@
 {
   "name": "zahlenspiel",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Zahlenspiel",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "clean:artifacts": "lerna exec -- rm -rf dist/ tsconfig.tsbuildinfo",
     "rebuild": "npm run clean && npm i && npm run bootstrap && npm run build",
     "build": "lerna run build",
+    "versionBump": "lerna version --no-git-tag-version --no-push",
     "prebundle": "rm -rf bundle && mkdir bundle && npm run rebuild",
     "bundle-frontend": "cp -rf packages/zahlenspiel-ui/build bundle/public",
     "bundle-backend": "cp -rf packages/zahlenspiel-backend/node_modules bundle && mv packages/zahlenspiel-backend/app bundle",
