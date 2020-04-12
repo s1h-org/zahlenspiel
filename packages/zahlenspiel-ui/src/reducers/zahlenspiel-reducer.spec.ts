@@ -2,14 +2,15 @@ import {initialState} from "../state/ui-state";
 import {
     Card,
     JoinErrorMessage,
-    JoinSuccessMessage, NewCardMessage,
+    JoinSuccessMessage,
+    NewCardMessage,
     Player,
     PlayerJoinMessage,
-    PlayerLeaveMessage, PlayerSwitchMessage, TurnFinishableMessage
+    PlayerLeaveMessage,
+    PlayerSwitchMessage,
+    TurnFinishableMessage
 } from "zahlenspiel-shared-entities";
 import {zahlenspielReducer} from "./zahlenspiel-reducer";
-import {Simulate} from "react-dom/test-utils";
-import play = Simulate.play;
 
 describe("zahlenspiel-reducer", () => {
     it("should update self on joinSuccess", () => {
