@@ -1,6 +1,11 @@
 import {initialState} from "../state/ui-state";
 import {
     Card,
+    CardStack,
+    GameLostMessage,
+    GameStartedMessage,
+    GameStates,
+    GameWonMessage,
     JoinErrorMessage,
     JoinSuccessMessage,
     NewCardMessage,
@@ -8,7 +13,10 @@ import {
     PlayerJoinMessage,
     PlayerLeaveMessage,
     PlayerSwitchMessage,
-    TurnFinishableMessage
+    SetupFinishedMessage,
+    StartGameMessage,
+    TurnFinishableMessage,
+    UpdateCardStackMessage
 } from "zahlenspiel-shared-entities";
 import {zahlenspielReducer} from "./zahlenspiel-reducer";
 
@@ -120,5 +128,43 @@ describe("zahlenspiel-reducer", () => {
 
         // THEN
         expect(updateState.couldFinish).toBeTruthy();
+    });
+
+    it("should determine which cardstack to update and update remaining cards on updateCardStack message", () => {
+        // GIVEN
+        const firstStack = new CardStack("first", "ascending", []);
+        const secondStack = new CardStack("second", "ascending", []);
+        const thirdStack = new CardStack("third", "descending", []);
+        const fourthStack = new CardStack("fourth", "descending", []);
+        const updatedStack = new CardStack("fourth", "descending", [10]);
+        const updatedCardStacks = [firstStack, secondStack, thirdStack, updatedStack];
+        const remainingCards = 15;
+        initialState.cardStacks = [firstStack, secondStack, thirdStack, fourthStack];
+
+        // WHEN
+        const updateState = zahlenspielReducer(initialState,
+            new UpdateCardStackMessage(updatedCardStacks, remainingCards)
+        );
+
+        // THEN
+        expect(updateState.cardStacks).toEqual(expect.arrayContaining(updatedCardStacks));
+        expect(updateState.updatedCardStackId).toBe(updatedStack.id);
+        expect(updateState.remainingCardsInDeck).toBe(remainingCards);
+    });
+
+    it.each<[GameStates, SetupFinishedMessage | StartGameMessage | GameWonMessage | GameLostMessage]>([
+        [GameStates.PREGAME, new SetupFinishedMessage()],
+        [GameStates.GAME, new GameStartedMessage()],
+        [GameStates.WON, new GameWonMessage()],
+        [GameStates.LOST, new GameLostMessage(10, "test reason")],
+    ])("should switch to gamestate %s on %s", (newState: GameStates, message: SetupFinishedMessage | GameStartedMessage | GameWonMessage | GameLostMessage) => {
+        // GIVEN
+        initialState.currentState = GameStates.WAITING
+
+        // WHEN
+        const updatedState = zahlenspielReducer(initialState, message);
+
+        // THEN
+        expect(updatedState.currentState).toBe(newState);
     });
 });
