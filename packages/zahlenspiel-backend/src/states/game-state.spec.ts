@@ -3,6 +3,10 @@ import {mockPartial} from "sneer";
 import {GameState} from "./game-state";
 import {Card, Direction, GameStates} from "zahlenspiel-shared-entities";
 
+beforeEach(() => {
+    jest.resetAllMocks();
+});
+
 describe("GameState", () => {
     describe("constructor", () => {
         it.each<[number, Direction]>([
@@ -164,6 +168,92 @@ describe("GameState", () => {
 
             // THEN
             expect(remainingCards).toBe(102);
+        });
+    });
+
+    describe("refillCurrentPlayerCards", () => {
+        it("should refill dropped cards with enough remaining cards", () => {
+            // GIVEN
+            const clientMock = mockPartial<Client>({});
+            const gameState = new GameState("pw");
+            gameState.addNewPlayer(clientMock, "current");
+            gameState.currentPlayer = gameState.players[0];
+            gameState.validDroppedCards = 10;
+
+            // WHEN
+            gameState.refillCurrentPlayerCards();
+
+            // THEN
+            expect(gameState.currentPlayer.cards.length).toBe(10);
+        });
+
+        it("should only refill dropped cards while cards are available", () => {
+            // GIVEN
+            const clientMock = mockPartial<Client>({});
+            const gameState = new GameState("pw");
+            gameState.addNewPlayer(clientMock, "current");
+            gameState.currentPlayer = gameState.players[0];
+            gameState.validDroppedCards = 110;
+
+            // WHEN
+            gameState.refillCurrentPlayerCards();
+
+            // THEN
+            expect(gameState.currentPlayer.cards.length).toBe(98);
+        });
+
+        it("should reset the amount of dropped cards", () => {
+            // GIVEN
+            const gameState = new GameState("pw");
+            gameState.resetDroppedCardsAmount = jest.fn();
+
+            // WHEN
+            gameState.refillCurrentPlayerCards();
+
+            // THEN
+            expect(gameState.resetDroppedCardsAmount).toBeCalledTimes(1);
+        });
+    });
+
+    describe("isGameWon", () => {
+        it("should return true if no cards are left", () => {
+            // GIVEN
+            const gameState = new GameState("pw");
+
+            // WHEN
+            for (let idx = 0; idx < gameState.currentDeck.length; ++idx) {
+                gameState.currentDeck.pop();
+            }
+
+            // THEN
+            expect(gameState.isGameWon()).toBeTruthy();
+        });
+
+        it("should return false if cards are left in deck", () => {
+            // GIVEN
+            const clientMock = mockPartial<Client>({});
+            const gameState = new GameState("pw");
+            gameState.addNewPlayer(clientMock, "current");
+            const testCard = new Card(42);
+            gameState.players[0].cards.push(testCard);
+
+            // WHEN
+            for (let idx = 0; idx < gameState.currentDeck.length; ++idx) {
+                gameState.currentDeck.pop();
+            }
+
+            // THEN
+            expect(gameState.isGameWon()).toBeFalsy();
+        });
+
+        it("should return false if a player has leftover cards", () => {
+            // GIVEN
+            const gameState = new GameState("pw");
+
+            // WHEN
+
+            // THEN
+            expect(gameState.isGameWon()).toBeFalsy();
         });
     });
 
