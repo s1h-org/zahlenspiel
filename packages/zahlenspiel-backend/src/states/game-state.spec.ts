@@ -272,5 +272,18 @@ describe("GameState", () => {
             // THEN
             expect(gameState.currentPlayer).toEqual(gameState.players[2]);
         });
+
+        it("should not loop endlessly if no players has anymore cards", () => {
+            // GIVEN
+            const clientMock = mockPartial<Client>({});
+            const gameState = new GameState("pw");
+            ["first", "second", "third"].forEach(playerName => gameState.addNewPlayer(clientMock, playerName));
+            gameState.setCurrentPlayer(gameState.players[0]);
+
+            // WHEN
+
+            // THEN
+            expect(gameState.nextPlayer).not.toThrow();
+        });
     });
 });
