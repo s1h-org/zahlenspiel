@@ -221,9 +221,7 @@ describe("GameState", () => {
             const gameState = new GameState("pw");
 
             // WHEN
-            for (let idx = 0; idx < gameState.currentDeck.length; ++idx) {
-                gameState.currentDeck.pop();
-            }
+            gameState.currentDeck = [];
 
             // THEN
             expect(gameState.isGameWon()).toBeTruthy();
