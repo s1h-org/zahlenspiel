@@ -19,6 +19,8 @@ import {
     UpdateCardStackMessage
 } from "zahlenspiel-shared-entities";
 import {zahlenspielReducer} from "./zahlenspiel-reducer";
+import {SelectCardStackAction} from "../actions/select-cardstack";
+import {FinishTurnAction} from "../actions/finish-turn";
 
 describe("zahlenspiel-reducer", () => {
     it("should update self on joinSuccess", () => {
@@ -166,5 +168,48 @@ describe("zahlenspiel-reducer", () => {
 
         // THEN
         expect(updatedState.currentState).toBe(newState);
+    });
+
+    it("should store reason for game loss and remaining cards on GameLost message", () => {
+        // GIVEN
+        const newState = GameStates.LOST;
+        const remainingCards = 42;
+        const reason = "lost due to testing reasons";
+        initialState.currentState = GameStates.WAITING
+        initialState.totalRemainingCards = 0;
+        initialState.causeOfLoss = "";
+
+        // WHEN
+        const updatedState = zahlenspielReducer(initialState, new GameLostMessage(remainingCards, reason));
+
+        // THEN
+        expect(updatedState.currentState).toBe(newState);
+        expect(updatedState.totalRemainingCards).toBe(remainingCards);
+        expect(updatedState.causeOfLoss).toBe(reason);
+    });
+
+    it("should reset turn finishable and selected cardstack on finished turns", () => {
+        // GIVEN
+        initialState.selectedCardStack = new CardStack("testId", "ascending", [42, 52]);
+        initialState.couldFinish = true;
+
+        // WHEN
+        const updatedState = zahlenspielReducer(initialState, new FinishTurnAction());
+
+        // THEN
+        expect(updatedState.couldFinish).toBeFalsy();
+        expect(updatedState.selectedCardStack).toBeUndefined();
+    });
+
+    it("should store cardstack on select", () => {
+        // GIVEN
+        initialState.selectedCardStack = undefined;
+        const selectableCardStack = new CardStack("testId", "ascending", [42]);
+
+        // WHEN
+        const updatedState = zahlenspielReducer(initialState, new SelectCardStackAction(selectableCardStack));
+
+        // THEN
+        expect(updatedState.selectedCardStack).toEqual(selectableCardStack);
     });
 });
