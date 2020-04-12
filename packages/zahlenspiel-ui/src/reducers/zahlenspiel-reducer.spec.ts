@@ -33,7 +33,7 @@ describe("zahlenspiel-reducer", () => {
         // WHEN
 
         // THEN
-        expect(zahlenspielReducer(initialState, incomingMessage)).toThrowError("test error");
+        expect(() => zahlenspielReducer(initialState, incomingMessage)).toThrowError("test error");
     });
 
     it("should update player list on player leave", () => {
