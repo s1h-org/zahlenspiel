@@ -1,5 +1,7 @@
 # Zahlenspiel
 
+![Preview image](.gfx/preview.png)
+
 ## What is it?
 
 This repository contains a digital version of **The Game**

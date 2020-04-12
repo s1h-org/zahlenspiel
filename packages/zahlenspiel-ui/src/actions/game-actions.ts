@@ -8,5 +8,5 @@ export abstract class BaseAction {
 }
 
 export const createTypeGuard = <T>(identifier: ActionType) => {
-    return (possibleTarget: any) => ("type" in possibleTarget && (possibleTarget as BaseAction).type === identifier);
+    return (possibleTarget: any): possibleTarget is T => ("type" in possibleTarget && (possibleTarget as BaseAction).type === identifier);
 };

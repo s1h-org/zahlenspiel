@@ -7,7 +7,7 @@ describe('determineCardsInHand', () => {
         [3, 6],
         [4, 6],
         [5, 6],
-    ])('$s player(s) should have $s cards', (players: number, cards: number) => {
+    ])('%d player(s) should have %d cards', (players: number, cards: number) => {
         expect(determineCardsInHand(players)).toBe(cards);
     });
 });

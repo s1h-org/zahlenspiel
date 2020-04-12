@@ -7,7 +7,7 @@ describe('turnFinishable', () => {
         [true, 4, 4],
         [false, 4, 1],
         [false, 4, 0],
-    ])('should be $s for $s remaining cards and $s dropped card', (expected: boolean, remainingCards: number, droppedCards: number) => {
+    ])('should be %s for %d remaining cards and %d dropped card', (expected: boolean, remainingCards: number, droppedCards: number) => {
         // WHEN
         const result = turnFinishable(droppedCards, remainingCards);
 

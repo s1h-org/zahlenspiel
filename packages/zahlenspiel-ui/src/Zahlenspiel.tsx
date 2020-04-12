@@ -35,6 +35,7 @@ const Zahlenspiel = (props: ZahlenspielProps) => {
     }
 
     if (error) {
+        window.location.hash = "";
         return <ErrorView><h3>{error.message}</h3></ErrorView>;
     } else if (currentGame) {
         return <Game room={currentGame} onQuit={leaveGame}/>;
