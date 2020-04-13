@@ -27,7 +27,7 @@ export class GameState extends Schema {
         this.addAscendingCardStack();
         this.addDescendingCardStack();
         this.addDescendingCardStack();
-        this.currentDeck = newDeck(2, 10);
+        this.currentDeck = newDeck(2, 99);
         this.currentGameState = GameStates.WAITING;
         this.password = password;
     }
