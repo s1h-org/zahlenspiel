@@ -177,13 +177,12 @@ const Game = (props: GameProps) => {
                         </CardStacks>
                     </Top>
                     <Center>
-                        {"Great job, you beat the game!"}
-                        <ActionButton onClick={() => leaveGame(true)}>{"New game!"}</ActionButton>
-                    </Center>;
+                        <Column>
+                            {"Great job, you beat the game!"}
+                            <ActionButton onClick={() => leaveGame(true)}>{"New game!"}</ActionButton>
+                        </Column>
+                    </Center>
                     <Bottom>
-                        <CardDeck>
-                            {renderCards()}
-                        </CardDeck>
                     </Bottom>
                 </>);
             case GameStates.LOST:

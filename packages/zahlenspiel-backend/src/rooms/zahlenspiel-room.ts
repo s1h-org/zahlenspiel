@@ -111,7 +111,7 @@ export class ZahlenspielRoom extends Room<GameState> {
             const leavingPlayer = this.state.getPlayer(client.id);
             this.state.removePlayer(client.id);
             const playerList = marshallPlayers(this.state.players);
-            this.broadcast(new PlayerLeaveMessage(playerList), {except: client});
+            this.broadcastDelayed(new PlayerLeaveMessage(playerList), {except: client});
             if (this.isGamePhase()) {
                 this.broadcastLoss(`${leavingPlayer.name} couldn't handle the pressure and left!`, {except: client});
             }
@@ -128,7 +128,7 @@ export class ZahlenspielRoom extends Room<GameState> {
 
     private broadcastWin() {
         this.state.currentGameState = GameStates.WON;
-        this.broadcast(new GameWonMessage());
+        this.broadcastDelayed(new GameWonMessage());
     }
 
     private broadcastLoss(reason?: string, options?: BroadcastOptions) {
