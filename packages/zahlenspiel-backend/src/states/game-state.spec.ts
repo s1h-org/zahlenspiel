@@ -281,9 +281,10 @@ describe("GameState", () => {
             gameState.setCurrentPlayer(gameState.players[0]);
 
             // WHEN
+            const SUT = () => gameState.nextPlayer();
 
             // THEN
-            expect(gameState.nextPlayer).not.toThrow();
+            expect(SUT).not.toThrow();
         });
     });
 });
