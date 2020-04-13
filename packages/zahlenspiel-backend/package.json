@@ -1,6 +1,6 @@
 {
   "name": "zahlenspiel-backend",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Zahlenspiel Backend",
   "main": "dist/index",
   "types": "dist/index",
@@ -38,6 +38,6 @@
     "sneer": "^1.0.1",
     "uuid": "^7.0.2",
     "winston": "^3.2.1",
-    "zahlenspiel-shared-entities": "^1.2.4"
+    "zahlenspiel-shared-entities": "^1.2.5"
   }
 }
