@@ -86,10 +86,10 @@ export class ZahlenspielRoom extends Room<GameState> {
                     this.send(player.client, new TurnValidMessage(player.cards));
                     this.updateCardStacks();
                     if (this.state.isGameWon()) {
-                        this.broadcast(new GameWonMessage());
+                        this.broadcastWin();
                         return;
                     } else if (this.state.isGameLost()) {
-                        this.broadcast(new GameLostMessage(this.state.totalRemainingCards(), "You can't drop anymore cards!"));
+                        this.broadcastLoss("You can't drop anymore cards!");
                     } else if (turnFinishable(this.state.validDroppedCards, this.state.currentDeck.length)) {
                         this.send(player.client, new TurnFinishableMessage());
                     }
@@ -111,9 +111,9 @@ export class ZahlenspielRoom extends Room<GameState> {
             const leavingPlayer = this.state.getPlayer(client.id);
             this.state.removePlayer(client.id);
             const playerList = marshallPlayers(this.state.players);
-            this.broadcast(new PlayerLeaveMessage(playerList), {except: client});
+            this.broadcastDelayed(new PlayerLeaveMessage(playerList), {except: client});
             if (this.isGamePhase()) {
-                this.broadcastDelayed(new GameLostMessage(this.state.totalRemainingCards(), `${leavingPlayer.name} couldn't handle the pressure and left!`), {except: client});
+                this.broadcastLoss(`${leavingPlayer.name} couldn't handle the pressure and left!`, {except: client});
             }
         } else {
             const reconnectedClient = await this.allowReconnection(client, MAX_RECONNECTION_TIME_IN_SECONDS);
@@ -126,9 +126,19 @@ export class ZahlenspielRoom extends Room<GameState> {
     onDispose() {
     }
 
+    private broadcastWin() {
+        this.state.currentGameState = GameStates.WON;
+        this.broadcastDelayed(new GameWonMessage());
+    }
+
+    private broadcastLoss(reason?: string, options?: BroadcastOptions) {
+        this.state.currentGameState = GameStates.LOST;
+        this.broadcastDelayed(new GameLostMessage(this.state.totalRemainingCards(), reason), options);
+    }
+
     private nextPlayer() {
         if (this.state.isGameLost()) {
-            this.broadcast(new GameLostMessage(this.state.totalRemainingCards(), "You can't drop anymore cards!"));
+            this.broadcastLoss("You can't drop anymore cards!");
         } else {
             this.state.nextPlayer();
             this.broadcast(new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
@@ -183,12 +193,20 @@ export class ZahlenspielRoom extends Room<GameState> {
         }
     }
 
-    private isPreGamePhase(): boolean {
-        return this.state.currentGameState === GameStates.PREGAME;
+    private isGameLost(): boolean {
+        return this.state.currentGameState === GameStates.LOST;
+    }
+
+    private isGameWon(): boolean {
+        return this.state.currentGameState === GameStates.WON;
     }
 
     private isGamePhase(): boolean {
         return this.state.currentGameState === GameStates.GAME;
+    }
+
+    private isPreGamePhase(): boolean {
+        return this.state.currentGameState === GameStates.PREGAME;
     }
 
     private isWaitingPhase(): boolean {
@@ -210,6 +228,16 @@ export class ZahlenspielRoom extends Room<GameState> {
             if (this.state.isCurrentPlayer(player) && turnFinishable(this.state.validDroppedCards, this.state.currentDeck.length)) {
                 this.sendDelayed(player.client, new TurnFinishableMessage());
             }
+        } else if (this.isGameWon()) {
+            this.sendDelayed(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
+            this.sendDelayed(player.client, new NewCardMessage(player.cards));
+            this.sendDelayed(player.client, new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
+            this.sendDelayed(player.client, new GameWonMessage());
+        } else if (this.isGameLost()) {
+            this.sendDelayed(player.client, new UpdateCardStackMessage(marshallCardStacks(this.state.cardStacks), this.state.remainingCardsOnStack()));
+            this.sendDelayed(player.client, new NewCardMessage(player.cards));
+            this.sendDelayed(player.client, new PlayerSwitchMessage(toPlayerDTO(this.state.currentPlayer)));
+            this.sendDelayed(player.client, new GameLostMessage(this.state.totalRemainingCards()));
         }
     }
 

@@ -90,6 +90,10 @@ export class GameState extends Schema {
     }
 
     nextPlayer() {
+        const playersWithCardsLeft = this.players.filter(player => player.cards.length).length > 0;
+        if (!playersWithCardsLeft) {
+            return;
+        }
         const nextPlayerOrdinal = (this.currentPlayer.order + 1) % this.players.length;
         this.currentPlayer = this.players.find((player: Player) => player.order === nextPlayerOrdinal);
         if (this.currentPlayer.cards.length === 0) {
