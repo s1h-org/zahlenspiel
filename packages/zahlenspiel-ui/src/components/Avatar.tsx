@@ -19,6 +19,6 @@ const AvatarImage = styled.img`
 export const Avatar = (props: AvatarProps) => {
     const today = new Date();
     const dateRandomizer = `${today.getFullYear()}${today.getMonth()}${today.getDate()}`;
-    const imgSrc = `https://api.adorable.io/avatars/${props.size}/${props.identifier}_${dateRandomizer}`;
+    const imgSrc = `https://robohash.org/${props.identifier}_${dateRandomizer}.png?size=${props.size}x${props.size}&ignoreext=false`;
     return <AvatarImage src={imgSrc} size={props.size}/>
 };
